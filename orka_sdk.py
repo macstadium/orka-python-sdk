@@ -1,6 +1,8 @@
 import json
 import requests
 
+from vm import VM
+
 ORKA_IP = 'http://10.221.188.100'
 
 class OrkaSDK:
@@ -11,7 +13,7 @@ class OrkaSDK:
 		self.password = None
 		self.license_key = None
 
-###############  Auth  ################
+###################  Auth  ###################
 
 	def login(self, user, password, license_key=None):
 		self.user = user
@@ -25,13 +27,14 @@ class OrkaSDK:
 		content = json.loads(result._content.decode('utf-8'))
 		self.token = content['token']
 
-################  VM Management  ###################
+###############  VM Management  ###############
 
 	def create_vm(self, vm_data):
 		self.create_vm_config(vm_data)
 		r = self.deploy_vm_config(vm_data.vm_name)
+		vm = VM(r)
 
-		return r
+		return vm
 
 	def create_vm_config(self, vm_data):
 		url = f"{ORKA_IP}/resources/vm/create"
@@ -46,9 +49,9 @@ class OrkaSDK:
 			'orka_cpu_core': int(vm_data['core_count']),
 			'vcpu_count': int(vm_data['vcpu_count'])
 			}
-		r = requests.post(url, data=json.dumps(data), headers=headers)
+		requests.post(url, data=json.dumps(data), headers=headers)
 
-		return r
+		return 0
         
 	def deploy_vm_config(self, vm_name):
 		url = f"{ORKA_IP}/resources/vm/deploy"
@@ -58,8 +61,9 @@ class OrkaSDK:
 			}
 		data =  {'orka_vm_name': vm_name}
 		r = requests.post(url, data=json.dumps(data), headers=headers)
+		vm = VM(r)
 
-		return r
+		return vm
 
 	def list_session_vms(self):
 		url = f"{ORKA_IP}/resources/vm/list"
@@ -71,14 +75,16 @@ class OrkaSDK:
 
 		return r
 
-	def list_user_vms(self, user=self.user):
+	def list_user_vms(self, user=None):
 		if self.license_key:
+			if not user:
+				user = self.user
 			url = f"{ORKA_IP}/resources/vm/list/{user}"
-				headers = {
-					'Content-Type': 'application/json', 
-					'Authorization': f"Bearer {self.token}",
-					'orka-licensekey': self.license_key
-					}
+			headers = {
+				'Content-Type': 'application/json', 
+				'Authorization': f"Bearer {self.token}",
+				'orka-licensekey': self.license_key
+				}
 			r = requests.post(url, headers=headers)
 
 			return r
@@ -88,41 +94,18 @@ class OrkaSDK:
 	def list_system_vms(self):
 		if self.license_key:
 			url = f"{ORKA_IP}/resources/vm/list/all"
-				headers = {
-					'Content-Type': 'application/json', 
-					'Authorization': f"Bearer {self.token}",
-					'orka-licensekey': self.license_key
-					}
+			headers = {
+				'Content-Type': 'application/json', 
+				'Authorization': f"Bearer {self.token}",
+				'orka-licensekey': self.license_key
+				}
 			r = requests.post(url, headers=headers)
 
 			return r
 		else:
-			return 'This method requires an orka license_key'
+			return 'Error: This method requires an orka license_key'
 		
-	def delete_vm(self):
-		pass
 
-##################################
-import os
-
-user = os.environ.get('ORKA_USER')
-password = os.environ.get('ORKA_PASS')
-license_key = os.environ.get('ORKA_LICENSE_KEY')
-
-orka = OrkaSDK()
-orka.login(user, password, license_key)
-print(orka.__dict__)
-
-vm_data = {
-	'vm_name':'fake_name',
-	'orka_base_image': '90GBigSurSSH.img',
-	'core_count': '3',
-	'vcpu_count': '3'
-}
-
-config = orka.create_vm_config(vm_data)
-vm = orka.deploy_vm_config(vm_data.vm_name)
-print(vm)
 
 
 
