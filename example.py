@@ -1,10 +1,11 @@
 from orka_sdk import OrkaSDK
 
 orka = OrkaSDK()
-orka.login('user@email.com', 'password')
+orka.login('jeff.d.vincent@gmail.com', '123456')
+print(orka.token)
 
 vm_data = {
-	'vm_name':'fake_name',
+	'vm_name': 'fake-name',
 	'orka_base_image': '90GBigSurSSH.img',
 	'core_count': '3',
 	'vcpu_count': '3'
@@ -16,7 +17,10 @@ print(vm.name)
 image = vm.save_as_image('image_name')
 
 cmd = 'echo Hello World'
+
 output = vm.exec(cmd)
+print(output['stdout'])
+print(output['stderr'])
+
 vm.delete()
-
-
+orka.revoke_token()

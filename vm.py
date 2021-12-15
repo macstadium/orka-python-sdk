@@ -1,11 +1,11 @@
 from paramiko import SSHClient
 
 
-class VM(deploy_response):
+class VM():
 
-	def __init__(self, deploy_response):
-		self.ip = deploy_response['ip']
-		self.name = deploy_response['name']
+	def __init__(self, content):
+		self.ip = content['ip']
+		self.name = content['help']['data_for_virtual_machine_exec_tasks']['orka_vm_name']
 		self.ssh_client = SSHClient()
 		self.ssh_user = 'admin'
 		self.ssh_pass = 'admin'
@@ -26,10 +26,10 @@ class VM(deploy_response):
 		return output
 
 
-	def save_as_image(self):
+	def save_as_image(self, image_name):
 		pass
 
-	def commit_to_image(self):
+	def commit_to_base_image(self):
 		pass
 
 	def delete(self):

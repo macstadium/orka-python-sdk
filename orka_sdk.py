@@ -22,19 +22,23 @@ class OrkaSDK:
 		self.token = self._get_token(user, password)
 
 	def _get_token(self, user, password):
-		data = {'email': user, 'password': password}
-		result = requests.post(f"{ORKA_IP}/token", data=data)
+		headers = {'Content-Type': 'application/json'}
+		data = json.dumps({'email': user, 'password': password})
+		result = requests.post(f"{ORKA_IP}/token", data=data, headers=headers)
 		content = json.loads(result._content.decode('utf-8'))
-		self.token = content['token']
+
+		return content['token']
+
+	def revoke_token(self):
+		pass
 
 ###############  VM Management  ###############
 
 	def create_vm(self, vm_data):
 		self.create_vm_config(vm_data)
-		r = self.deploy_vm_config(vm_data.vm_name)
-		vm = VM(r)
 
-		return vm
+		return self.deploy_vm_config(vm_data['vm_name'])
+
 
 	def create_vm_config(self, vm_data):
 		url = f"{ORKA_IP}/resources/vm/create"
@@ -49,7 +53,7 @@ class OrkaSDK:
 			'orka_cpu_core': int(vm_data['core_count']),
 			'vcpu_count': int(vm_data['vcpu_count'])
 			}
-		requests.post(url, data=json.dumps(data), headers=headers)
+		r = requests.post(url, data=json.dumps(data), headers=headers)
 
 		return 0
         
@@ -61,7 +65,9 @@ class OrkaSDK:
 			}
 		data =  {'orka_vm_name': vm_name}
 		r = requests.post(url, data=json.dumps(data), headers=headers)
-		vm = VM(r)
+		content = json.loads(r._content.decode('utf-8'))
+		print(content)
+		vm = VM(content)
 
 		return vm
 
