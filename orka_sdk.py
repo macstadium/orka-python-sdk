@@ -77,9 +77,10 @@ class OrkaSDK:
 			'Content-Type': 'application/json', 
 			'Authorization': f"Bearer {self.token}"
 			}
-		r = requests.post(url, headers=headers)
+		r = requests.get(url, headers=headers)
+		vm_instances = self._instantiate_vms(r)
 
-		return r
+		return vm_instances
 
 	def list_user_vms(self, user=None):
 		if self.license_key:
@@ -91,9 +92,10 @@ class OrkaSDK:
 				'Authorization': f"Bearer {self.token}",
 				'orka-licensekey': self.license_key
 				}
-			r = requests.post(url, headers=headers)
+			r = requests.get(url, headers=headers)
+			vm_instances = self._instantiate_vms(r)
 
-			return r
+			return vm_instances
 		else:
 			return 'Error: This method requires an orka license_key'
 
@@ -105,12 +107,27 @@ class OrkaSDK:
 				'Authorization': f"Bearer {self.token}",
 				'orka-licensekey': self.license_key
 				}
-			r = requests.post(url, headers=headers)
+			r = requests.get(url, headers=headers)
+			vm_instances = self._instantiate_vms(r)
 
-			return r
+			return vm_instances
 		else:
 			return 'Error: This method requires an orka license_key'
 		
+
+	def _instantiate_vms(self, r):
+		vm_instances = []
+		content = json.loads(r._content.decode('utf-8'))
+		for vm in content['virtual_machine_resources']:
+			data = {}
+			data['ssh_port'] = vm['status'][0]['ssh_port']
+			data['ip'] = vm['status'][0]['virtual_machine_ip']
+			data['name'] = vm['virtual_machine_name']
+			vm = VM(data)
+			vm_instances.append(vm)
+
+		return vm_instances
+
 
 
 
