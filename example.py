@@ -1,5 +1,3 @@
-#!/home/jeffdvincent/.local/share/virtualenvs/orka-python-sdk-RXnglN9t/bin/python
-
 from orka_sdk import OrkaSDK
 
 orka = OrkaSDK()
@@ -25,7 +23,7 @@ print(orka.token)
 
 vm_list = orka.list_session_vms()
 for vm in vm_list:
-	output = vm.exec('printenv')
+	output = vm.exec('echo "admin" | sudo -S printenv')
 	print(output)
 
 # vm.delete()
