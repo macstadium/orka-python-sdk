@@ -5,7 +5,7 @@ orka = OrkaSDK()
 # should have an auth section in the docs to explain 
 # orka-license-key
 r = orka.login('jeff.d.vincent@gmail.com', '123456')
-print(r.errors)
+# print(r.errors)
 # print(orka.token)
 
 # vm_data = {
@@ -39,10 +39,11 @@ print(r.errors)
 
 # print(output)
 
-# result = orka.list_session_vms()
-# if result.success:
-# 	for vm in result.data:
-# 		output = vm.exec('printenv')
-# 		print(output)
+result = orka.list_session_vms()
+print(result.errors)
+if result.success:
+	for vm in result.data:
+		output = vm.exec('printenv')
+		print(output)
 
 

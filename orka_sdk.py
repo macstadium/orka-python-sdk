@@ -95,9 +95,6 @@ class OrkaSDK:
 
 		return data
 
-
-		### {'message': 'Successfully deployed VM', 'help': {'start_virtual_machine': 'To start a VM send rest request to http://10.221.188.100/resources/vm/exec/start', 'stop_virtual_machine': 'To stop a VM send rest request to http://10.221.188.100/resources/vm/exec/stop', 'resume_virtual_machine': 'To resume a VM send rest request to http://10.221.188.100/resources/vm/exec/resume', 'suspend_virtual_machine': 'To suspend a VM send rest request to http://10.221.188.100/resources/vm/exec/suspend', 'data_for_virtual_machine_exec_tasks': {'orka_vm_name': 'fake-name', 'orka_node_name': 'macpro-4'}, 'virtual_machine_vnc': 'Once started and deployed, you can use VNC to access it via 10.221.188.14:6000'}, 'errors': [], 'ram': '7.50G', 'vcpu': '3', 'host_cpu': '3', 'ip': '10.221.188.14', 'ssh_port': '8823', 'screen_share_port': '5901', 'vm_id': 'e8dc77a8656f5', 'port_warnings': [], 'io_boost': True, 'use_saved_state': False, 'gpu_passthrough': False, 'vnc_port': '6000'}
-
 	def list_session_vms(self):
 		url = f"{ORKA_IP}/resources/vm/list"
 		headers = {
@@ -107,7 +104,7 @@ class OrkaSDK:
 		r = requests.get(url, headers=headers)
 		content = json.loads(r._content.decode('utf-8'))
 		errors = content.get('errors')
-		vm_instances = self._instantiate_vms(r)
+		vm_instances = self._instantiate_vms(content)
 
 		return Result(errors=errors, data=vm_instances)
 
@@ -137,7 +134,11 @@ class OrkaSDK:
 				'orka-licensekey': self.license_key
 				}
 			r = requests.get(url, headers=headers)
+			print(r)
+
+
 			content = json.loads(r._content.decode('utf-8'))
+			print(content)
 			vm_instances = self._instantiate_vms(content)
 
 			return vm_instances
@@ -154,6 +155,14 @@ class OrkaSDK:
 			data['ip'] = vm['status'][0]['virtual_machine_ip']
 			data['id'] = vm['status'][0]['virtual_machine_id']
 			data['name'] = vm['virtual_machine_name']
+			data['ram'] = vm['status'][0]['RAM']
+			data['vcpu'] = vm['status'][0]['vcpu']
+			data['cpu'] = vm['status'][0]['cpu']
+			data['io_boost'] = vm['status'][0]['io_boost']
+			data['use_saved_state'] = vm['status'][0]['use_saved_state']
+			data['gpu_passthrough'] = vm['status'][0]['gpu']
+			data['screen_share_port'] = vm['status'][0]['screen_sharing_port']
+			data['vnc_port'] = vm['status'][0]['vnc_port']
 			
 			vm = VM(data)
 			vm_instances.append(vm)
