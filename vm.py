@@ -8,6 +8,15 @@ class VM():
 		self.ip = data['ip']
 		self.name = data['name']
 		self.ssh_port = data['ssh_port']
+		self.id = data['id']
+		self.ram = data['ram']
+		self.vcpu = data['vcpu']
+		self.cpu = data['cpu']
+		self.io_boost = data['io_boost']
+		self.use_saved_state = data['use_saved_state']
+		self.gpu_passthrough = data['gpu_passthrough']
+		self.screen_share_port = data['screen_share_port']
+		self.vnc_port = data['vnc_port']
 		self.ssh_client = paramiko.SSHClient()
 		self.ssh_client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
 		self.ssh_user = 'admin'
@@ -31,7 +40,7 @@ class VM():
 				allow_agent=False
 				)
 		except Exception as e:
-			print(e)
+			return str(e)
 
 		stdin, stdout, stderr = \
 			self.ssh_client.exec_command(cmd)
@@ -46,11 +55,4 @@ class VM():
 		return output
 
 
-	def save_as_image(self, image_name):
-		pass
 
-	def commit_to_base_image(self):
-		pass
-
-	def delete(self):
-		pass

@@ -16,10 +16,16 @@ class OrkaSDK:
 ###################  Auth  ###################
 
 	def login(self, user, password, license_key=None):
+		errors = []
 		self.user = user
 		self.password = password
 		self.license_key = license_key
-		self.token = self._get_token(user, password)
+		try:
+			self.token = self._get_token(user, password)
+		except Exception as e:
+			errors.append(str(e))
+
+		return Result(errors=errors)
 
 	def _get_token(self, user, password):
 		headers = {'Content-Type': 'application/json'}
@@ -39,7 +45,6 @@ class OrkaSDK:
 
 		return self.deploy_vm_config(vm_data['vm_name'])
 
-
 	def create_vm_config(self, vm_data):
 		url = f"{ORKA_IP}/resources/vm/create"
 		headers = {
@@ -54,8 +59,10 @@ class OrkaSDK:
 			'vcpu_count': int(vm_data['vcpu_count'])
 			}
 		r = requests.post(url, data=json.dumps(data), headers=headers)
-
-		return 0
+		content = json.loads(r._content.decode('utf-8'))
+		errors = content.get('errors')
+		
+		return Result(errors=errors)
         
 	def deploy_vm_config(self, vm_name):
 		url = f"{ORKA_IP}/resources/vm/deploy"
@@ -65,11 +72,31 @@ class OrkaSDK:
 			}
 		data =  {'orka_vm_name': vm_name}
 		r = requests.post(url, data=json.dumps(data), headers=headers)
-		content = json.loads(r._content.decode('utf-8'))
-		print(content)
-		vm = VM(content)
+		data = self._parse_config_response(r)
+		
+		return VM(data)
 
-		return vm
+	def _parse_config_response(self, r):
+		data = {}
+		content = json.loads(r._content.decode('utf-8'))
+		data['ip'] = content['ip']
+		data['id'] = content['vm_id']
+		data['ssh_port'] = content['ssh_port']
+		data['name'] = \
+			content['help']['data_for_virtual_machine_exec_tasks']['orka_vm_name']
+		data['ram'] = content['ram']
+		data['vcpu'] = content['vcpu']
+		data['cpu'] = content['host_cpu']
+		data['io_boost'] = content['io_boost']
+		data['use_saved_state'] = content['use_saved_state']
+		data['gpu_passthrough'] = content['gpu_passthrough']
+		data['screen_share_port'] = content['screen_share_port']
+		data['vnc_port'] = content['vnc_port']
+
+		return data
+
+
+		### {'message': 'Successfully deployed VM', 'help': {'start_virtual_machine': 'To start a VM send rest request to http://10.221.188.100/resources/vm/exec/start', 'stop_virtual_machine': 'To stop a VM send rest request to http://10.221.188.100/resources/vm/exec/stop', 'resume_virtual_machine': 'To resume a VM send rest request to http://10.221.188.100/resources/vm/exec/resume', 'suspend_virtual_machine': 'To suspend a VM send rest request to http://10.221.188.100/resources/vm/exec/suspend', 'data_for_virtual_machine_exec_tasks': {'orka_vm_name': 'fake-name', 'orka_node_name': 'macpro-4'}, 'virtual_machine_vnc': 'Once started and deployed, you can use VNC to access it via 10.221.188.14:6000'}, 'errors': [], 'ram': '7.50G', 'vcpu': '3', 'host_cpu': '3', 'ip': '10.221.188.14', 'ssh_port': '8823', 'screen_share_port': '5901', 'vm_id': 'e8dc77a8656f5', 'port_warnings': [], 'io_boost': True, 'use_saved_state': False, 'gpu_passthrough': False, 'vnc_port': '6000'}
 
 	def list_session_vms(self):
 		url = f"{ORKA_IP}/resources/vm/list"
@@ -78,9 +105,11 @@ class OrkaSDK:
 			'Authorization': f"Bearer {self.token}"
 			}
 		r = requests.get(url, headers=headers)
+		content = json.loads(r._content.decode('utf-8'))
+		errors = content.get('errors')
 		vm_instances = self._instantiate_vms(r)
 
-		return vm_instances
+		return Result(errors=errors, data=vm_instances)
 
 	def list_user_vms(self, user=None):
 		if self.license_key:
@@ -97,7 +126,7 @@ class OrkaSDK:
 
 			return vm_instances
 		else:
-			return 'Error: This method requires an orka license_key'
+			return 'Authentication Error: This method requires an orka license_key'
 
 	def list_system_vms(self):
 		if self.license_key:
@@ -108,27 +137,67 @@ class OrkaSDK:
 				'orka-licensekey': self.license_key
 				}
 			r = requests.get(url, headers=headers)
-			vm_instances = self._instantiate_vms(r)
+			content = json.loads(r._content.decode('utf-8'))
+			vm_instances = self._instantiate_vms(content)
 
 			return vm_instances
 		else:
-			return 'Error: This method requires an orka license_key'
-		
+			return 'Authentication Error: This method requires an orka license_key'
 
-	def _instantiate_vms(self, r):
+	def _instantiate_vms(self, content):
 		vm_instances = []
-		content = json.loads(r._content.decode('utf-8'))
+		
 		for vm in content['virtual_machine_resources']:
+			print(vm)
 			data = {}
 			data['ssh_port'] = vm['status'][0]['ssh_port']
 			data['ip'] = vm['status'][0]['virtual_machine_ip']
+			data['id'] = vm['status'][0]['virtual_machine_id']
 			data['name'] = vm['virtual_machine_name']
+			
 			vm = VM(data)
 			vm_instances.append(vm)
 
 		return vm_instances
 
+	def delete_vm(self, vm):
+		pass
+
+
+############# Image Management ###############
+
+	def save_vm_as_image(self, image_name, vm):
+		url = f"{ORKA_IP}/resources/image/save"
+		headers = {
+			'Content-Type': 'application/json', 
+			'Authorization': f"Bearer {self.token}"
+			}
+		data = json.dumps({
+			'orka_vm_name': vm.id,
+			'new_name': image_name
+		})
+		r = requests.post(url, headers=headers, data=data)
+		content = json.loads(r._content.decode('utf-8'))
+		errors = content.get('errors')
+		
+		return Result(errors=errors)
 
 
 
+	def commit_vm_state_to_base_image(self, vm):
+		pass
+
+
+
+
+
+class Result:
+
+	def __init__(self, errors, data=None):
+		self.data = data
+		self.errors = errors
+		if self.errors:
+			self.success = False
+		else:
+			self.success = True
 

@@ -1,8 +1,12 @@
 from orka_sdk import OrkaSDK
 
 orka = OrkaSDK()
-orka.login('jeff.d.vincent@gmail.com', '123456')
-print(orka.token)
+
+# should have an auth section in the docs to explain 
+# orka-license-key
+r = orka.login('jeff.d.vincent@gmail.com', '123456')
+print(r.errors)
+# print(orka.token)
 
 # vm_data = {
 # 	'vm_name': 'fake-name',
@@ -12,19 +16,33 @@ print(orka.token)
 # }
 
 # vm = orka.create_vm(vm_data)
-# print(vm.name)
 
-# # image = vm.save_as_image('image_name')
+######################################################################
+### Notes for docs: create_vm should get its own section in the docs. 
+### it is a convenience wrapper for create_vm_config() and deploy_vm_config()
+### and is one of two methods that returns a VM instance.
+##########################################################################
+
+# r = orka.save_vm_as_image('new-image-name1.img', vm)
+
+# ### r is an instance of the class Result
+
+# if r.success:
+# 	print('Successfully saved image.')
+# else:
+# 	print('Failed to save image.\nErrors:\n ')
+# 	for e in r.errors:
+# 		print(f'{e}\n\n')
 
 # cmd = 'printenv'
 # output = vm.exec(cmd)
 
 # print(output)
 
-vm_list = orka.list_session_vms()
-for vm in vm_list:
-	output = vm.exec('echo "admin" | sudo -S printenv')
-	print(output)
+# result = orka.list_session_vms()
+# if result.success:
+# 	for vm in result.data:
+# 		output = vm.exec('printenv')
+# 		print(output)
 
-# vm.delete()
-# orka.revoke_token()
+
