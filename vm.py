@@ -1,6 +1,7 @@
 import paramiko
 import time
 
+from result import Result
 
 class VM():
 
@@ -18,7 +19,8 @@ class VM():
 		self.screen_share_port = data['screen_share_port']
 		self.vnc_port = data['vnc_port']
 		self.ssh_client = paramiko.SSHClient()
-		self.ssh_client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
+		self.ssh_client.set_missing_host_key_policy(
+			paramiko.AutoAddPolicy())
 		self.ssh_user = 'admin'
 		self.ssh_pass = 'admin'
 
@@ -40,10 +42,13 @@ class VM():
 				allow_agent=False
 				)
 		except Exception as e:
-			return str(e)
+			return Result(errors=str(e))
 
-		stdin, stdout, stderr = \
-			self.ssh_client.exec_command(cmd)
+		try:	
+			stdin, stdout, stderr = \
+				self.ssh_client.exec_command(cmd)
+		except Exception as e:
+			return Result(errors=str(e))
 		
 		output['stdout'] = stdout.read().decode("utf8")
 		output['stderr'] = stderr.read().decode("utf8")
@@ -52,7 +57,4 @@ class VM():
 		stdout.close()
 		stderr.close()
 
-		return output
-
-
-
+		return Result(errors=None, data=output)

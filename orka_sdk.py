@@ -1,7 +1,8 @@
 import json
 import requests
-
+from result import Result
 from vm import VM
+
 
 ORKA_IP = 'http://10.221.188.100'
 
@@ -73,8 +74,9 @@ class OrkaSDK:
 		data =  {'orka_vm_name': vm_name}
 		r = requests.post(url, data=json.dumps(data), headers=headers)
 		data = self._parse_config_response(r)
+		vm = VM(data)
 		
-		return VM(data)
+		return Result(errors=None, data=vm)
 
 	def _parse_config_response(self, r):
 		data = {}
@@ -119,11 +121,15 @@ class OrkaSDK:
 				'orka-licensekey': self.license_key
 				}
 			r = requests.get(url, headers=headers)
-			vm_instances = self._instantiate_vms(r)
+			content = json.loads(r._content.decode('utf-8'))
+			errors = content.get('errors')
+			vm_instances = self._instantiate_vms(content)
 
-			return vm_instances
+			return Result(errors=errors, data=vm_instances)
 		else:
-			return 'Authentication Error: This method requires an orka license_key'
+			errors = ["{'Authentication Error': 'This method requires an orka license_key'}"]
+
+			return Result(errors=errors)
 
 	def list_system_vms(self):
 		if self.license_key:
@@ -134,38 +140,40 @@ class OrkaSDK:
 				'orka-licensekey': self.license_key
 				}
 			r = requests.get(url, headers=headers)
-			print(r)
-
-
 			content = json.loads(r._content.decode('utf-8'))
-			print(content)
+			errors = content.get('errors')
+			if errors:
+
+				return Result(errors=errors)
+			
 			vm_instances = self._instantiate_vms(content)
 
-			return vm_instances
+			return Result(errors=None, data=vm_instances)
 		else:
-			return 'Authentication Error: This method requires an orka license_key'
+
+			return Result(errors=\
+				['Authentication Error: This method requires an orka license_key'])
 
 	def _instantiate_vms(self, content):
 		vm_instances = []
-		
 		for vm in content['virtual_machine_resources']:
-			print(vm)
-			data = {}
-			data['ssh_port'] = vm['status'][0]['ssh_port']
-			data['ip'] = vm['status'][0]['virtual_machine_ip']
-			data['id'] = vm['status'][0]['virtual_machine_id']
-			data['name'] = vm['virtual_machine_name']
-			data['ram'] = vm['status'][0]['RAM']
-			data['vcpu'] = vm['status'][0]['vcpu']
-			data['cpu'] = vm['status'][0]['cpu']
-			data['io_boost'] = vm['status'][0]['io_boost']
-			data['use_saved_state'] = vm['status'][0]['use_saved_state']
-			data['gpu_passthrough'] = vm['status'][0]['gpu']
-			data['screen_share_port'] = vm['status'][0]['screen_sharing_port']
-			data['vnc_port'] = vm['status'][0]['vnc_port']
-			
-			vm = VM(data)
-			vm_instances.append(vm)
+			if vm['vm_deployment_status'] == 'Deployed':
+				data = {}
+				data['ssh_port'] = vm['status'][0]['ssh_port']
+				data['ip'] = vm['status'][0]['virtual_machine_ip']
+				data['id'] = vm['status'][0]['virtual_machine_id']
+				data['name'] = vm['virtual_machine_name']
+				data['ram'] = vm['status'][0]['RAM']
+				data['vcpu'] = vm['status'][0]['vcpu']
+				data['cpu'] = vm['status'][0]['cpu']
+				data['io_boost'] = vm['status'][0]['io_boost']
+				data['use_saved_state'] = vm['status'][0]['use_saved_state']
+				data['gpu_passthrough'] = vm['status'][0]['gpu']
+				data['screen_share_port'] = vm['status'][0]['screen_sharing_port']
+				data['vnc_port'] = vm['status'][0]['vnc_port']
+				
+				vm = VM(data)
+				vm_instances.append(vm)
 
 		return vm_instances
 
@@ -195,18 +203,3 @@ class OrkaSDK:
 
 	def commit_vm_state_to_base_image(self, vm):
 		pass
-
-
-
-
-
-class Result:
-
-	def __init__(self, errors, data=None):
-		self.data = data
-		self.errors = errors
-		if self.errors:
-			self.success = False
-		else:
-			self.success = True
-
