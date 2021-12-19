@@ -24,7 +24,7 @@ class OrkaSDK:
 		try:
 			self.token = self._get_token(user, password)
 		except Exception as e:
-			errors.append(str(e))
+			errors.append(f'message: {str(e)}')
 
 		return Result(errors=errors)
 
@@ -73,10 +73,19 @@ class OrkaSDK:
 			}
 		data =  {'orka_vm_name': vm_name}
 		r = requests.post(url, data=json.dumps(data), headers=headers)
-		data = self._parse_config_response(r)
-		vm = VM(data)
+		content = json.loads(r._content.decode('utf-8'))
+		errors = content.get('errors')
+		if errors:
+
+			return Result(errors=errors)
+
+		try:
+			data = self._parse_config_response(r)
+			vm = VM(data)
+		except Exception as e:
+			errors = [str(e)]
 		
-		return Result(errors=None, data=vm)
+		return Result(errors=errors, data=vm)
 
 	def _parse_config_response(self, r):
 		data = {}
@@ -106,9 +115,12 @@ class OrkaSDK:
 		r = requests.get(url, headers=headers)
 		content = json.loads(r._content.decode('utf-8'))
 		errors = content.get('errors')
+		if errors:
+		
+			return Result(errors=errors)
 		vm_instances = self._instantiate_vms(content)
 
-		return Result(errors=errors, data=vm_instances)
+		return Result(errors=None, data=vm_instances)
 
 	def list_user_vms(self, user=None):
 		if self.license_key:
@@ -123,11 +135,19 @@ class OrkaSDK:
 			r = requests.get(url, headers=headers)
 			content = json.loads(r._content.decode('utf-8'))
 			errors = content.get('errors')
-			vm_instances = self._instantiate_vms(content)
+			if errors:
+
+				return Result(errors=errors)
+			try:
+				vm_instances = self._instantiate_vms(content)
+			except Exception as e:
+				errors = [f'Failed to instantiate VMs, missing key {str(e)}']
+
+				return Result(errors=errors)
 
 			return Result(errors=errors, data=vm_instances)
 		else:
-			errors = ["{'Authentication Error': 'This method requires an orka license_key'}"]
+			errors = ['This method requires an orka license_key']
 
 			return Result(errors=errors)
 
@@ -145,14 +165,18 @@ class OrkaSDK:
 			if errors:
 
 				return Result(errors=errors)
-			
-			vm_instances = self._instantiate_vms(content)
+			try:
+				vm_instances = self._instantiate_vms(content)
+			except Exception as e:
+				errors = [f'Failed to instantiate VMs, missing key {str(e)}']
+
+				return Result(errors=errors)
 
 			return Result(errors=None, data=vm_instances)
 		else:
+			errors = ['This method requires an orka license_key']
 
-			return Result(errors=\
-				['Authentication Error: This method requires an orka license_key'])
+			return Result(errors=errors)
 
 	def _instantiate_vms(self, content):
 		vm_instances = []
@@ -178,7 +202,21 @@ class OrkaSDK:
 		return vm_instances
 
 	def delete_vm(self, vm):
-		pass
+		url = f'{ORKA_IP}/resources/vm/delete'
+
+		data = json.dumps({
+		  "orka_vm_name": f"{vm.name}",
+		})
+		headers = {
+		  'Content-Type': 'application/json',
+		  'Authorization': f'Bearer {self.token}'
+		}
+
+		r = requests.delete(url, headers=headers, data=data)
+		content = json.loads(r._content.decode('utf-8'))
+		errors = content.get('errors')
+		
+		return Result(errors=errors)
 
 
 ############# Image Management ###############
@@ -199,7 +237,17 @@ class OrkaSDK:
 		
 		return Result(errors=errors)
 
-
-
 	def commit_vm_state_to_base_image(self, vm):
-		pass
+		url = f'{ORKA_IP}/resources/image/commit'
+		data = json.dumps({
+		  "orka_vm_name": f"{vm.name}"
+		})
+		headers = {
+		  'Content-Type': 'application/json',
+		  'Authorization': f'Bearer {self.token}'
+		}
+		r = requests.post(url, headers=headers, data=data)
+		content = json.loads(r._content.decode('utf-8'))
+		errors = content.get('errors')
+		
+		return Result(errors=errors)
