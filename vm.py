@@ -6,6 +6,7 @@ from result import Result
 class VM():
 
 	def __init__(self, data):
+		time.sleep(15)
 		self.ip = data['ip']
 		self.name = data['name']
 		self.ssh_port = data['ssh_port']
@@ -36,8 +37,6 @@ class VM():
 
 	def exec(self, cmd):
 		output = {}
-		time.sleep(15)
-
 		try:
 			self._connect_ssh_client()
 		except Exception as e:
@@ -63,7 +62,6 @@ class VM():
 		self.sftp_client = self.ssh_client.open_sftp()
 
 	def upload(self, local_path, dest_path):
-		time.sleep(15)
 		try:
 			self._connect_ssh_client()
 			self._create_sftp_client()
@@ -79,7 +77,6 @@ class VM():
 		return Result(errors=None)
 
 	def download(self, dest_path, local_path):
-		time.sleep(15)
 		try:
 			self._connect_ssh_client()
 			self._create_sftp_client()

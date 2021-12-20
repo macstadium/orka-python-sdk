@@ -221,17 +221,21 @@ class OrkaSDK:
 		return vm_instances
 
 
-	def get_vm_by_id(self, id):
+	def get_vm_by_id(self, _id):
 		r = self.list_session_vms()
 		if r.errors:
 
 			return Result(errors=r.errors)
 
 		for vm in r.data:
-			if vm.id == id:
-				data = vm 
+			if vm.id == _id:
+				data = vm
+			else:
+				errors = f'VM with id: {_id} not found'
 
-		return Result(errors=r.errors, data=data)
+				return Result(errors=errors)
+
+		return Result(errors=None, data=data)
 
 	def get_vm_by_name(self, name):
 		pass
