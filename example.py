@@ -16,16 +16,25 @@ vm_data = {
 	'vcpu_count': '3'
 }
 
-# r = orka.create_vm(vm_data)    # r is an instance of the class Result
-# if r.success:
-# 	vm = r.data    # vm is an instance of the class VM
-# else:
-# 	print(r.errors)
-
-r = orka.list_session_vms()
+r = orka.create_vm(vm_data)    # r is an instance of the class Result
 if r.success:
-	for vm in r.data:
-		print(vm.name)
+	vm = r.data    # vm is an instance of the class VM
+else:
+	print(r.errors)
+
+local_path = '/home/jeffdvincent/orka-python-sdk/example.py'
+dest_path = '/Users/admin/example.py'
+
+r = vm.upload(local_path, dest_path)
+
+if r.success:
+	r = vm.exec(f'cat {dest_path}')
+	print(r.__dict__)
+
+# r = orka.list_session_vms()
+# if r.success:
+# 	for vm in r.data:
+# 		print(vm.name)
 
 # # r = orka.save_vm_as_image('new-image.img', vm)    # r is an instance of the class Result
 # # if r.success:
@@ -81,7 +90,7 @@ if r.success:
 # 		print(vm.name)
 # 		pass
 
-r = orka.get_vm_by_id('2db81bb93f67f')
-if r.success:
-	vm = r.data
-	print(vm.id)
+# r = orka.get_vm_by_id('2db81bb93f67f')
+# if r.success:
+# 	vm = r.data
+# 	print(vm.id)

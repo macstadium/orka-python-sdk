@@ -84,6 +84,8 @@ class OrkaSDK:
 			vm = VM(data)
 		except Exception as e:
 			errors = [str(e)]
+
+			return Result(errors=errors)
 		
 		return Result(errors=errors, data=vm)
 
