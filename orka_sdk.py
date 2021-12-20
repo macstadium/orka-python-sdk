@@ -195,11 +195,44 @@ class OrkaSDK:
 				data['gpu_passthrough'] = vm['status'][0]['gpu']
 				data['screen_share_port'] = vm['status'][0]['screen_sharing_port']
 				data['vnc_port'] = vm['status'][0]['vnc_port']
-				
+				data['deployed'] = True
+				vm = VM(data)
+				vm_instances.append(vm)
+			else:
+				data = {}
+				data['ssh_port'] = None
+				data['ip'] = None
+				data['id'] = None
+				data['name'] = vm['virtual_machine_name']
+				data['ram'] = None
+				data['vcpu'] = vm['vcpu']
+				data['cpu'] = vm['cpu']
+				data['io_boost'] = vm['io_boost']
+				data['use_saved_state'] = vm['use_saved_state']
+				data['gpu_passthrough'] = vm['gpu_passthrough']
+				data['screen_share_port'] = None
+				data['vnc_port'] = None
+				data['deployed'] = False
 				vm = VM(data)
 				vm_instances.append(vm)
 
 		return vm_instances
+
+
+	def get_vm_by_id(self, id):
+		r = self.list_session_vms()
+		if r.errors:
+
+			return Result(errors=r.errors)
+
+		for vm in r.data:
+			if vm.id == id:
+				data = vm 
+
+		return Result(errors=r.errors, data=data)
+
+	def get_vm_by_name(self, name):
+		pass
 
 	def delete_vm(self, vm):
 		url = f'{ORKA_IP}/resources/vm/delete'

@@ -26,29 +26,25 @@ class VM():
 
 	def exec(self, cmd):
 		output = {}
-		ssh_port = self.ssh_port
-		ssh_user = self.ssh_user
-		ssh_pass = self.ssh_pass
-
 		time.sleep(15)
 
 		try:
 			self.ssh_client.connect(
 				self.ip, username=self.ssh_user, 
 				password=self.ssh_pass, 
-				port=ssh_port, 
+				port=self.ssh_port, 
 				look_for_keys=False, 
 				timeout=60, 
 				allow_agent=False
 				)
 		except Exception as e:
-			return Result(errors=str(e))
+			return Result(errors=[str(e)])
 
 		try:	
 			stdin, stdout, stderr = \
 				self.ssh_client.exec_command(cmd)
 		except Exception as e:
-			return Result(errors=str(e))
+			return Result(errors=[str(e)])
 		
 		output['stdout'] = stdout.read().decode("utf8")
 		output['stderr'] = stderr.read().decode("utf8")
