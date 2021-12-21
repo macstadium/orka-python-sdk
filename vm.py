@@ -91,3 +91,28 @@ class VM():
 
 		return Result(errors=None)
 
+	def write_persistent_env_var(self, data, dest=None):
+		dest_text = ''
+		exports = []
+		if not dest:
+			dest = '/Users/admin/.bash_profile'
+
+		for var, value in data.items():
+			export = f'export {var}={value}\n'
+			exports.append(export)
+
+		# if the file exists already, read its contents
+		r = self.exec(f'cat {dest}')
+		if r.success and r.data['stdout']:
+			dest_text = r.data['stdout']
+
+		# write the temp file locally
+		with open('environment.temp', 'w') as temp_file:
+			temp_file.write(dest_text)
+			# sloppily append exports to end for now
+			for export in exports:
+				temp_file.write(export)
+		r = self.upload('environment.temp', dest)
+
+		return Result(errors=r.errors)
+
