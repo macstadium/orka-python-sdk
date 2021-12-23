@@ -45,6 +45,8 @@ class VM():
 		try:	
 			stdin, stdout, stderr = \
 				self.ssh_client.exec_command(cmd)
+			stdin.write(f'{self.ssh_pass}\n')
+			stdin.flush()
 		except Exception as e:
 
 			return Result(errors=[str(e)])
@@ -69,7 +71,8 @@ class VM():
 
 			return Result(errors=[str(e)])
 		try:
-			self.sftp_client.put(local_path, dest_path)
+			self.sftp_client.put(
+				local_path, dest_path)
 		except Exception as e:
 
 			return Result(errors=[str(e)])
@@ -84,7 +87,8 @@ class VM():
 
 			return Result(errors=[str(e)])
 		try:
-			self.sftp_client.get(dest_path, local_path)
+			self.sftp_client.get(
+				dest_path, local_path)
 		except Exception as e:
 
 			return Result(errors=[str(e)])
@@ -103,7 +107,10 @@ class VM():
 
 		# if the file exists already, read its contents
 		r = self.exec(f'cat {dest}')
-		if r.success and r.data['stdout']:
+		if r.errors:
+
+			return r
+		if r.data['stdout']:
 			dest_text = r.data['stdout']
 
 		# write the temp file locally
@@ -114,5 +121,24 @@ class VM():
 				temp_file.write(export)
 		r = self.upload('environment.temp', dest)
 
-		return Result(errors=r.errors)
+		return r
 
+	def enable_auto_login(self):
+		cmd = (f'sudo -S -p "" defaults write' 
+			f' /Library/Preferences/com.apple.loginwindow.plist' 
+			f' autoLoginUser {self.ssh_user}')
+		r = self.exec(cmd)
+		if r.errors:
+
+			return r
+		cmd = (f'sudo -S -p "" plutil -replace autoLoginUser -string'
+			f' {self.ssh_user} /Library/Preferences/com.apple.loginwindow.plist')
+		r = self.exec(cmd)
+		if r.errors:
+
+			return r
+		cmd = (f'sudo -S -p "" /usr/libexec/PlistBuddy -c "Set autoLoginUser' 
+			f' {self.ssh_user}" /Library/Preferences/com.apple.loginwindow.plist')
+		r = self.exec(cmd)
+
+		return r

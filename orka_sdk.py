@@ -220,7 +220,6 @@ class OrkaSDK:
 
 		return vm_instances
 
-
 	def get_vm_by_id(self, _id):
 		r = self.list_session_vms()
 		if r.errors:
