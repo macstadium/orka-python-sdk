@@ -142,3 +142,8 @@ class VM():
 		r = self.exec(cmd)
 
 		return r
+
+
+	def create_launch_daemon(self, data):
+		pass
+

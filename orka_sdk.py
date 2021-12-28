@@ -2,6 +2,8 @@ import json
 import requests
 from result import Result
 from vm import VM
+from k8s import K8s
+from nodes import Nodes
 
 
 ORKA_IP = 'http://10.221.188.100'
@@ -9,10 +11,14 @@ ORKA_IP = 'http://10.221.188.100'
 class OrkaSDK:
 
 	def __init__(self):
+		self.orka_ip = ORKA_IP
 		self.token = None
 		self.user = None
 		self.password = None
 		self.license_key = None
+		self.k8s = K8s()
+		self.images = None
+		self.nodes = None
 
 ###################  Auth  ###################
 
@@ -23,6 +29,7 @@ class OrkaSDK:
 		self.license_key = license_key
 		try:
 			self.token = self._get_token(user, password)
+			self.nodes = Nodes(self)
 		except Exception as e:
 			errors.append(f'message: {str(e)}')
 
