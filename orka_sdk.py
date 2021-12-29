@@ -2,6 +2,7 @@ import json
 import requests
 from result import Result
 from vm import VM
+from images import Images
 from k8s import K8s
 from nodes import Nodes
 
@@ -16,7 +17,7 @@ class OrkaSDK:
 		self.user = None
 		self.password = None
 		self.license_key = None
-		self.k8s = K8s()
+		self.k8s = None
 		self.images = None
 		self.nodes = None
 
@@ -30,6 +31,11 @@ class OrkaSDK:
 		try:
 			self.token = self._get_token(user, password)
 			self.nodes = Nodes(self)
+			self.images = Images(self)
+			if self.license_key:
+				self.k8s = K8s(self)
+			else:
+				print('Kubernetes functionality disabled. Requires Orka license-key.')
 		except Exception as e:
 			errors.append(f'message: {str(e)}')
 
