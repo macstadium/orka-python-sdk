@@ -293,7 +293,7 @@ class OrkaSDK:
 	def commit_vm_state_to_base_image(self, vm):
 		url = f'{ORKA_IP}/resources/image/commit'
 		data = json.dumps({
-		  "orka_vm_name": f"{vm.name}"
+		  "orka_vm_name": f"{vm.id}"
 		})
 		headers = {
 		  'Content-Type': 'application/json',
