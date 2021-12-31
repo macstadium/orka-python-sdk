@@ -35,9 +35,12 @@ class OrkaSDK:
 			if self.license_key:
 				self.k8s = K8s(self)
 			else:
+				# TODO: logging?
 				print('Kubernetes functionality disabled. Requires Orka license-key.')
 		except Exception as e:
-			errors.append(f'message: {str(e)}')
+			errors = [str(e)]
+
+			return Result(errors=errors)
 
 		return Result(errors=errors)
 
@@ -93,7 +96,7 @@ class OrkaSDK:
 			return Result(errors=errors)
 
 		try:
-			data = self._parse_config_response(r)
+			data = self._parse_config_response(content)
 			vm = VM(data)
 		except Exception as e:
 			errors = [str(e)]
@@ -102,9 +105,8 @@ class OrkaSDK:
 		
 		return Result(errors=errors, data=vm)
 
-	def _parse_config_response(self, r):
+	def _parse_config_response(self, content):
 		data = {}
-		content = json.loads(r._content.decode('utf-8'))
 		data['ip'] = content['ip']
 		data['id'] = content['vm_id']
 		data['ssh_port'] = content['ssh_port']

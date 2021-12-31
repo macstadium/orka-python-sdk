@@ -1,6 +1,7 @@
-import paramiko
+import os
 import time
-
+import paramiko
+from jinja2 import *
 from result import Result
 
 class VM():
@@ -145,5 +146,22 @@ class VM():
 
 
 	def create_launch_daemon(self, data):
+		#render template as temp file
+		cwd = os.path.dirname(os.path.abspath(__file__))
+		env = Environment(loader=FileSystemLoader(cwd))
+		template = env.get_template('launch_daemon.jinja')
+		with open('launch_daemon.temp', 'w') as f:
+			f.write(template.render(data))
+
+		#upload temp file
+		r = self.upload(
+			'launch_daemon.temp',
+			'/tmp/launch_daemon.temp')
+
+		r = self.exec(f'sudo -S -p "" mv /tmp/launch_daemon.temp /Library/LaunchDaemons/com.{data["name"]}.app.plist')
+
+		return r
+
+	def _remove_temp_files(self):
 		pass
 

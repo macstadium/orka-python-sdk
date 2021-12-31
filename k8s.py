@@ -19,15 +19,14 @@ class K8s:
 			self.client = client.AppsV1Api()
 			
 			return None
-
 		home = str(Path.home())
-		config_path = os.path.join(home, 'kubeconfig-orka')
+		config_path = \
+			os.path.join(home, 'kubeconfig-orka')
 		if os.path.exists(config_path):
 			config.load_kube_config(config_path)
 			self.client = client.AppsV1Api()
 		else:
 			self.client = None
-
 
 	def create_deployment(self, yaml_path):
 		with open(yaml_path) as f:

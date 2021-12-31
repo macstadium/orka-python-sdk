@@ -7,3 +7,4 @@ class Result:
 			self.success = False
 		else:
 			self.success = True
+			

@@ -1,7 +1,7 @@
 import json
 import requests
-
 from result import Result
+
 
 class Nodes():
 
@@ -11,7 +11,6 @@ class Nodes():
 		self.password = base_sdk.password
 		self.license_key = base_sdk.license_key
 		self.orka_ip = base_sdk.orka_ip
-
 
 	def list(self):
 		url = f'{self.orka_ip}/resources/node/list'
