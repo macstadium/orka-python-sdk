@@ -1,7 +1,8 @@
 import os
 import time
 import paramiko
-from jinja2 import *
+from jinja2 import Environment
+from jinja2 import FileSystemLoader
 from result import Result
 
 class VM():
@@ -115,12 +116,15 @@ class VM():
 			dest_text = r.data['stdout']
 
 		# write the temp file locally
-		with open('environment.temp', 'w') as temp_file:
-			temp_file.write(dest_text)
+		with open('environment.temp', 'w') as f:
+			f.write(dest_text)
 			# sloppily append exports to end for now
 			for export in exports:
-				temp_file.write(export)
+				f.write(export)
 		r = self.upload('environment.temp', dest)
+
+		# clean up
+		self._remove_temp_files()
 
 		return r
 
@@ -144,24 +148,46 @@ class VM():
 
 		return r
 
-
 	def create_launch_daemon(self, data):
-		#render template as temp file
-		cwd = os.path.dirname(os.path.abspath(__file__))
+		# render template as temp file
+		cwd = os.getcwd()
 		env = Environment(loader=FileSystemLoader(cwd))
 		template = env.get_template('launch_daemon.jinja')
 		with open('launch_daemon.temp', 'w') as f:
 			f.write(template.render(data))
 
-		#upload temp file
+		# upload temp file
 		r = self.upload(
 			'launch_daemon.temp',
 			'/tmp/launch_daemon.temp')
+		if r.errors:
 
-		r = self.exec(f'sudo -S -p "" mv /tmp/launch_daemon.temp /Library/LaunchDaemons/com.{data["name"]}.app.plist')
+			return r
+
+		# move file with sudo
+		r = self.exec(
+			f'sudo -S -p "" mv /tmp/launch_daemon.temp ' 
+			f'/Library/LaunchDaemons/com.{data["name"]}.app.plist')
+
+		# clean up
+		self._remove_temp_files()
+		try:
+			r = self.exec('rm -rf /tmp/launch_daemon.temp')
+		except Exception as e:
+			print('Warning: failed to remove remote temp file.')
 
 		return r
 
 	def _remove_temp_files(self):
-		pass
+		cwd = os.getcwd()
+		for f in os.listdir(cwd):
+			if '.temp' in f:
+				path = os.path.join(cwd, f)
+				os.remove(path)
+
+		return None
+
+
+
+
 

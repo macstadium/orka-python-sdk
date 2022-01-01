@@ -137,7 +137,7 @@ class OrkaSDK:
 			return Result(errors=errors)
 		vm_instances = self._instantiate_vms(content)
 
-		return Result(errors=None, data=vm_instances)
+		return Result(errors=errors, data=vm_instances)
 
 	def list_user_vms(self, user=None):
 		if self.license_key:
@@ -164,7 +164,7 @@ class OrkaSDK:
 
 			return Result(errors=errors, data=vm_instances)
 		else:
-			errors = ['This method requires an orka license_key']
+			errors = ['This method requires an Orka license-key']
 
 			return Result(errors=errors)
 
@@ -235,17 +235,17 @@ class OrkaSDK:
 
 		return vm_instances
 
-	def get_vm_by_id(self, _id):
+	def get_vm_by_id(self, vm_id):
 		r = self.list_session_vms()
 		if r.errors:
 
 			return Result(errors=r.errors)
 
 		for vm in r.data:
-			if vm.id == _id:
+			if vm.id == vm_id:
 				data = vm
 			else:
-				errors = f'VM with id: {_id} not found'
+				errors = f'VM with id: {vm_id} not found'
 
 				return Result(errors=errors)
 
@@ -256,15 +256,13 @@ class OrkaSDK:
 
 	def delete_vm(self, vm):
 		url = f'{ORKA_IP}/resources/vm/delete'
-
-		data = json.dumps({
-		  "orka_vm_name": f"{vm.name}",
-		})
 		headers = {
 		  'Content-Type': 'application/json',
 		  'Authorization': f'Bearer {self.token}'
 		}
-
+		data = json.dumps({
+		  'orka_vm_name': vm.name
+		})
 		r = requests.delete(url, headers=headers, data=data)
 		content = json.loads(r._content.decode('utf-8'))
 		errors = content.get('errors')
@@ -275,7 +273,7 @@ class OrkaSDK:
 ############# Image Management ###############
 
 	def save_vm_as_image(self, image_name, vm):
-		url = f"{ORKA_IP}/resources/image/save"
+		url = f'{ORKA_IP}/resources/image/save'
 		headers = {
 			'Content-Type': 'application/json', 
 			'Authorization': f"Bearer {self.token}"
@@ -292,13 +290,13 @@ class OrkaSDK:
 
 	def commit_vm_state_to_base_image(self, vm):
 		url = f'{ORKA_IP}/resources/image/commit'
-		data = json.dumps({
-		  "orka_vm_name": f"{vm.id}"
-		})
 		headers = {
 		  'Content-Type': 'application/json',
 		  'Authorization': f'Bearer {self.token}'
 		}
+		data = json.dumps({
+		  'orka_vm_name': vm.id
+		})
 		r = requests.post(url, headers=headers, data=data)
 		content = json.loads(r._content.decode('utf-8'))
 		errors = content.get('errors')
