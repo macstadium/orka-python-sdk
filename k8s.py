@@ -65,3 +65,33 @@ class K8s:
 			return Result(errors=errors)
 
 		return r
+
+	def create_service(self, yaml_path):
+		with open(yaml_path) as f:
+			service = yaml.safe_load(f)
+			try:
+				r = self.client.create_namespaced_service(
+					body=service, namespace='sandbox')
+			except Exception as e:
+				errors = [str(e)]
+
+				return Result(errors=errors)
+			
+			return r
+
+	def delete_service(self, name):
+		try:
+			r = self.client.delete_namespaced_service(
+				name=name,
+				namespace="sandbox",
+				body=client.V1DeleteOptions(
+					propagation_policy="Foreground",
+					grace_period_seconds=5
+				)
+		  	)
+		except Exception as e:
+			errors = [str(e)]
+
+			return Result(errors=errors)
+
+		return r

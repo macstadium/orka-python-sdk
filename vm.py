@@ -176,6 +176,8 @@ class VM():
 		except Exception as e:
 			print('Warning: failed to remove remote temp file.')
 
+			return r
+
 		return r
 
 	def _remove_temp_files(self):
