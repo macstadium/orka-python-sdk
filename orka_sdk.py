@@ -81,13 +81,23 @@ class OrkaSDK:
 		
 		return Result(errors=errors)
         
-	def deploy_vm_config(self, vm_name):
+	def deploy_vm_config(self, vm_name, vm_metadata=None):
 		url = f"{ORKA_IP}/resources/vm/deploy"
 		headers = {
 			'Content-Type': 'application/json', 
 			'Authorization': f"Bearer {self.token}"
 			}
-		data =  {'orka_vm_name': vm_name}
+		data =  {
+			'orka_vm_name': vm_name,
+			'vm_metadata': {}
+			}
+		if vm_metadata:
+			items = []
+			for key, value in vm_metadata.items():
+				item = '{'+f'"key":"{key}", "value":"{value}"'+'}'
+				items.append(json.loads(item))
+
+			data['vm_metadata']['items'] = items
 		r = requests.post(url, data=json.dumps(data), headers=headers)
 		content = json.loads(r._content.decode('utf-8'))
 		errors = content.get('errors')

@@ -101,7 +101,7 @@ class VM():
 		dest_text = ''
 		exports = []
 		if not dest:
-			dest = '/Users/admin/.bash_profile'
+			dest = '/Users/admin/.zshenv'
 
 		for var, value in data.items():
 			export = f'export {var}={value}\n'
@@ -188,8 +188,3 @@ class VM():
 				os.remove(path)
 
 		return None
-
-
-
-
-
