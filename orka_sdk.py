@@ -246,18 +246,19 @@ class OrkaSDK:
 		return vm_instances
 
 	def get_vm_by_id(self, vm_id):
-		r = self.list_session_vms()
+		r = self.list_system_vms()
 		if r.errors:
 
 			return Result(errors=r.errors)
 
 		for vm in r.data:
-			if vm.id == vm_id:
+			if vm_id == vm.id:
 				data = vm
-			else:
-				errors = f'VM with id: {vm_id} not found'
 
-				return Result(errors=errors)
+		if not data:
+			errors = f'VM with id: {vm_id} not found'
+
+			return Result(errors=errors)
 
 		return Result(errors=None, data=data)
 
