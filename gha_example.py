@@ -1,5 +1,4 @@
 import os
-import time
 from gha_controller import GHAController
 from orka_sdk import OrkaSDK
 
@@ -23,13 +22,11 @@ vm_id = controller.vm.id
 # # Wait for the runner to register
 controller.check_runner_status()
 print('It\'s alive!')
-time.sleep(35)
 
 ##########################
 # # Imaginary Job runs # #
 ##########################
-# In some magical way, we are 
-# alerted that the job has finished. Webhook?
+
 # Get the VM by its ID
 r = orka.get_vm_by_id(vm_id)
 vm = r.data
