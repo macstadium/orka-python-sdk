@@ -1,6 +1,6 @@
 # orka-python-sdk
 
-Currently working stuffs
+An SDK for interacting with Orka clusters and the macOS VMs they run.
 
 ```
 from orka_sdk import OrkaSDK
