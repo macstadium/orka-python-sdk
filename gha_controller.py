@@ -49,7 +49,6 @@ class GHAController:
 			'github_user': self.github_user,
 			'github_pat': self.github_pat,
 			'github_repo_name': self.github_repo_name,
-			'vm_name': self.vm_name
 		}
 
 		r = self.orka.create_vm_config(vm_data)
