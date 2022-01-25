@@ -17,6 +17,7 @@ class GHAController:
 		self.github_repo_name = os.environ.get('GH_REPO')
 		self.core_count = os.environ.get('CORE_COUNT')
 		self.vcpu_count = os.environ.get('VCPU_COUNT')
+		self.base_image = os.environ.get('ORKA_BASE_IMAGE')
 		self.gh_session = requests.Session()
 		self.gh_session.auth = (self.github_user, self.github_pat)
 		self.orka = OrkaSDK()
@@ -40,7 +41,7 @@ class GHAController:
 			self.vcpu_count = '6'
 		vm_data = {
 			'vm_name': self.vm_name,
-			'orka_base_image': 'gha.img',
+			'orka_base_image': self.base_image,
 			'core_count': self.core_count,
 			'vcpu_count': self.vcpu_count
 		}
@@ -80,6 +81,8 @@ class GHAController:
 			self.check_runner_status()
 
 	def tear_down(self):
+		if not self.vm_name:
+			self.vm_name = self.vm.name
 		self.orka.delete_vm(self.vm)
 		self._get_runner_id()
 		self._remove_runner_from_gh()
