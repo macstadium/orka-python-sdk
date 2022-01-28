@@ -102,3 +102,9 @@ deploy_vm_config_response = {
   "gpu_passthrough": "false",
   "vnc_port": "6000"
 }
+
+save_vm_as_image_response = {
+  "message": "saved",
+  "help": {},
+  "errors": []
+}

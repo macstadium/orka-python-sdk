@@ -64,9 +64,18 @@ def test_deploy_vm_config(a_mock):
 	r = orka.deploy_vm_config(vm_name, vm_metadata)
 	assert r.success == True
 	assert not r.errors
+	assert r.data.name == 'myorkavm'
 
-
-
-
-
-
+@patch('orka_sdk.requests.get')
+@patch('orka_sdk.requests.post')
+def test_save_vm_as_image(post_mock, get_mock):
+	post_mock.return_value = MockResponse(sample_data.save_vm_as_image_response)
+	get_mock.return_value = MockResponse(sample_data.list_vms_response)
+	orka = OrkaSDK()
+	orka.license_key = 'license-key'
+	r = orka.list_system_vms()
+	vm = r.data[0]
+	image_name = 'fake.img'
+	r = orka.save_vm_as_image(image_name, vm)
+	assert r.success == True
+	assert not r.errors
