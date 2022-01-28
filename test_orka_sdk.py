@@ -39,6 +39,31 @@ def test_get_vm_by_id(a_mock):
 	assert r.errors == None
 	assert r.data.name == 'myorkavm'
 
+@patch('orka_sdk.requests.post')
+def test_create_vm_config(a_mock):
+	a_mock.return_value = MockResponse(sample_data.create_vm_config_response)
+	orka = OrkaSDK()
+	orka.license_key = 'license-key'
+	config_data = {
+	'vm_name': 'myorkavm',
+	'orka_base_image': 'fake.img',
+	'core_count': '6',
+	'vcpu_count': '6'
+	}
+	r = orka.create_vm_config(config_data)
+	assert r.success == True
+	assert not r.errors
+
+@patch('orka_sdk.requests.post')
+def test_deploy_vm_config(a_mock):
+	a_mock.return_value = MockResponse(sample_data.deploy_vm_config_response)
+	orka = OrkaSDK()
+	orka.license_key = 'license-key'
+	vm_name = 'myorkavm'
+	vm_metadata = {'sample_data': 'stuff'}
+	r = orka.deploy_vm_config(vm_name, vm_metadata)
+	assert r.success == True
+	assert not r.errors
 
 
 
