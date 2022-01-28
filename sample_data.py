@@ -108,3 +108,9 @@ save_vm_as_image_response = {
   "help": {},
   "errors": []
 }
+
+commit_vm_state_to_base_image_response = {
+  "message": "committed",
+  "help": {},
+  "errors": []
+}

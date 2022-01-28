@@ -79,3 +79,16 @@ def test_save_vm_as_image(post_mock, get_mock):
 	r = orka.save_vm_as_image(image_name, vm)
 	assert r.success == True
 	assert not r.errors
+
+@patch('orka_sdk.requests.get')
+@patch('orka_sdk.requests.post')
+def test_commit_vm_state_to_base_image(post_mock, get_mock):
+	post_mock.return_value = MockResponse(sample_data.commit_vm_state_to_base_image_response)
+	get_mock.return_value = MockResponse(sample_data.list_vms_response)
+	orka = OrkaSDK()
+	orka.license_key = 'license-key'
+	r = orka.list_system_vms()
+	vm = r.data[0]
+	r = orka.commit_vm_state_to_base_image(vm)
+	assert r.success == True
+	assert not r.errors
