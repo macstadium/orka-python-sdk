@@ -280,6 +280,21 @@ class OrkaSDK:
 		
 		return Result(errors=errors)
 
+	def purge_vm(self, vm):
+		url = f'{ORKA_IP}/resources/vm/purge'
+		headers = {
+		  'Content-Type': 'application/json',
+		  'Authorization': f'Bearer {self.token}'
+		}
+		data = json.dumps({
+		  'orka_vm_name': vm.name
+		})
+		r = requests.delete(url, headers=headers, data=data)
+		content = json.loads(r._content.decode('utf-8'))
+		errors = content.get('errors')
+		
+		return Result(errors=errors)
+
 
 ############# Image Management ###############
 

@@ -26,7 +26,7 @@ def test_list_system_vms(a_mock):
 	orka = OrkaSDK()
 	orka.license_key = 'fake-key'
 	r = orka.list_system_vms()
-	assert r.errors == None
+	assert not r.errors
 	assert type(r.data) == list
 	assert r.data[0].name == 'myorkavm'
 
@@ -36,7 +36,7 @@ def test_get_vm_by_id(a_mock):
 	orka = OrkaSDK()
 	orka.license_key = 'license-key'
 	r = orka.get_vm_by_id('05ca969973999')
-	assert r.errors == None
+	assert not r.errors 
 	assert r.data.name == 'myorkavm'
 
 @patch('orka_sdk.requests.post')
@@ -92,3 +92,4 @@ def test_commit_vm_state_to_base_image(post_mock, get_mock):
 	r = orka.commit_vm_state_to_base_image(vm)
 	assert r.success == True
 	assert not r.errors
+

@@ -83,7 +83,7 @@ class GHAController:
 	def tear_down(self):
 		if not self.vm_name:
 			self.vm_name = self.vm.name
-		self.orka.delete_vm(self.vm)
+		self.orka.purge_vm(self.vm)
 		self._get_runner_id()
 		self._remove_runner_from_gh()
 
