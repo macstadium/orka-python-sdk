@@ -1,4 +1,5 @@
 import json
+import time
 import requests
 from result import Result
 from vm import VM
@@ -87,11 +88,9 @@ class OrkaSDK:
 			'Content-Type': 'application/json', 
 			'Authorization': f"Bearer {self.token}"
 			}
-		data =  {
-			'orka_vm_name': vm_name,
-			'vm_metadata': {}
-			}
+		data =  {'orka_vm_name': vm_name}
 		if vm_metadata:
+			data['vm_metadata'] = {}
 			items = []
 			for key, value in vm_metadata.items():
 				item = '{'+f'"key":"{key}", "value":"{value}"'+'}'
@@ -104,7 +103,7 @@ class OrkaSDK:
 		if errors:
 
 			return Result(errors=errors)
-
+		time.sleep(15)
 		try:
 			data = self._parse_config_response(content)
 			vm = VM(data)

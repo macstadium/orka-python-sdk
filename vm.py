@@ -1,5 +1,4 @@
 import os
-import time
 import paramiko
 from jinja2 import Environment
 from jinja2 import FileSystemLoader
@@ -8,7 +7,6 @@ from result import Result
 class VM():
 
 	def __init__(self, data):
-		time.sleep(15)
 		self.ip = data['ip']
 		self.name = data['name']
 		self.ssh_port = data['ssh_port']
