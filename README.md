@@ -103,5 +103,5 @@ orka.k8s.delete_deployment('<deployment_name>')
 ```
 
 ## Integrations with Orka
-- [GitHub Actions](https://github.com/jeff-vincent/orka-python-sdk/blob/main/gha_example.py)
+- Ephemeral [GitHub Actions](https://github.com/jeff-vincent/orka-python-sdk/blob/main/gha_example.py) self-hosted runners that live in Orka can be easily orchestrated with the `GHAController` class when paired with [these `agent` resources](https://github.com/jeff-vincent/orka-actions-connect).
 
