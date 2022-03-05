@@ -1,4 +1,4 @@
-from result import Result
+from orka_sdk.result import Result
 
 
 class Images:

@@ -1,9 +1,7 @@
-import json
-import requests
-from result import Result
+from orka_sdk.result import Result
 
 
-class Nodes():
+class Images:
 
 	def __init__(self, base_sdk):
 		self.token = base_sdk.token
@@ -13,7 +11,7 @@ class Nodes():
 		self.orka_ip = base_sdk.orka_ip
 
 	def list(self):
-		url = f'{self.orka_ip}/resources/node/list'
+		url = f'{self.orka_ip}/resources/image/list'
 		headers = {
 			'Authorization': f'Bearer {self.token}'
 			}
@@ -23,5 +21,6 @@ class Nodes():
 		if errors:
 
 			return Result(errors=errors)
-
-		return Result(errors=errors, data=content['nodes'])
+		data = content['image_attributes']
+		
+		return Result(errors=errors, data=data)

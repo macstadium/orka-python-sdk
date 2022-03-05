@@ -1,5 +1,5 @@
-import os
-from gha_controller import GHAController
+import time
+from orka_sdk.gha_controller import GHAController
 
 
 # # Spin up a runner
@@ -16,6 +16,7 @@ print('It\'s alive!')
 ##########################
 # # Imaginary Job runs # #
 ##########################
+time.sleep(20)
 
 # Get the VM by its ID
 r = controller.orka.get_vm_by_id(vm_id)

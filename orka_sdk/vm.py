@@ -2,7 +2,7 @@ import os
 import paramiko
 from jinja2 import Environment
 from jinja2 import FileSystemLoader
-from result import Result
+from orka_sdk.result import Result
 
 class VM():
 

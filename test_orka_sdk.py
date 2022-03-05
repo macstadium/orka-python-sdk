@@ -1,8 +1,7 @@
 import json
 from unittest.mock import patch
-import pytest
-from orka_sdk import OrkaSDK
-import sample_data
+from orka_sdk.orka_sdk import OrkaSDK
+import sample_data as sample_data
 
 class MockResponse:
 	def __init__(self, content):
@@ -20,7 +19,7 @@ def test_login(a_mock):
 	assert orka.token == 'fake-token'
 	assert r.success == True
 
-@patch('orka_sdk.requests.get')
+@patch('orka_sdk.orka_sdk.requests.get')
 def test_list_system_vms(a_mock):
 	a_mock.return_value = MockResponse(sample_data.list_vms_response)
 	orka = OrkaSDK()
@@ -30,7 +29,7 @@ def test_list_system_vms(a_mock):
 	assert type(r.data) == list
 	assert r.data[0].name == 'myorkavm'
 
-@patch('orka_sdk.requests.get')
+@patch('orka_sdk.orka_sdk.requests.get')
 def test_get_vm_by_id(a_mock):
 	a_mock.return_value = MockResponse(sample_data.list_vms_response)
 	orka = OrkaSDK()
@@ -39,7 +38,7 @@ def test_get_vm_by_id(a_mock):
 	assert not r.errors 
 	assert r.data.name == 'myorkavm'
 
-@patch('orka_sdk.requests.post')
+@patch('orka_sdk.orka_sdk.requests.post')
 def test_create_vm_config(a_mock):
 	a_mock.return_value = MockResponse(sample_data.create_vm_config_response)
 	orka = OrkaSDK()
@@ -54,7 +53,7 @@ def test_create_vm_config(a_mock):
 	assert r.success == True
 	assert not r.errors
 
-@patch('orka_sdk.requests.post')
+@patch('orka_sdk.orka_sdk.requests.post')
 def test_deploy_vm_config(a_mock):
 	a_mock.return_value = MockResponse(sample_data.deploy_vm_config_response)
 	orka = OrkaSDK()
@@ -66,8 +65,8 @@ def test_deploy_vm_config(a_mock):
 	assert not r.errors
 	assert r.data.name == 'myorkavm'
 
-@patch('orka_sdk.requests.get')
-@patch('orka_sdk.requests.post')
+@patch('orka_sdk.orka_sdk.requests.get')
+@patch('orka_sdk.orka_sdk.requests.post')
 def test_save_vm_as_image(post_mock, get_mock):
 	post_mock.return_value = MockResponse(sample_data.save_vm_as_image_response)
 	get_mock.return_value = MockResponse(sample_data.list_vms_response)
@@ -80,8 +79,8 @@ def test_save_vm_as_image(post_mock, get_mock):
 	assert r.success == True
 	assert not r.errors
 
-@patch('orka_sdk.requests.get')
-@patch('orka_sdk.requests.post')
+@patch('orka_sdk.orka_sdk.requests.get')
+@patch('orka_sdk.orka_sdk.requests.post')
 def test_commit_vm_state_to_base_image(post_mock, get_mock):
 	post_mock.return_value = MockResponse(sample_data.commit_vm_state_to_base_image_response)
 	get_mock.return_value = MockResponse(sample_data.list_vms_response)

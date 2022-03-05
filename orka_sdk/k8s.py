@@ -3,7 +3,7 @@ import requests
 import yaml
 from pathlib import Path
 from kubernetes import client, config
-from result import Result
+from orka_sdk.result import Result
 
 
 class K8s:

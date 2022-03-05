@@ -1,11 +1,11 @@
 import json
 import time
 import requests
-from result import Result
-from vm import VM
-from images import Images
-from k8s import K8s
-from nodes import Nodes
+from .result import Result
+from orka_sdk.vm import VM
+from orka_sdk.images import Images
+from orka_sdk.k8s import K8s
+from orka_sdk.nodes import Nodes
 
 
 ORKA_IP = 'http://10.221.188.100'

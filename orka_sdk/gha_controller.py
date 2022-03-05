@@ -4,7 +4,7 @@ import random
 import requests
 import string
 import time
-from orka_sdk import OrkaSDK
+from orka_sdk.orka_sdk import OrkaSDK
 
 class GHAController:
 
