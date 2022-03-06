@@ -3,15 +3,21 @@
 An SDK for interacting with Orka clusters and the macOS VMs they run.
 
 #### Contents
+ - [Installation](#installation)
  - [Orka](#define-and-create-a-vm)
  - [k8s](#deploy-a-k8s-service)
- - [GitHub Actions](#integrations-with-orka)
+ - [GitHub Actions](#github-actions-controller)
 
+
+### Installation
+```
+pip install orka_sdk
+```
 
 ### Define and create a VM
 
 ```
-from orka_sdk import OrkaSDK
+from orka_sdk.orka_sdk import OrkaSDK
 
 orka = OrkaSDK()
 orka.login(
@@ -102,6 +108,14 @@ orka.k8s.create_service('<path_to_yaml_definition>')
 orka.k8s.delete_deployment('<deployment_name>')
 ```
 
-## Integrations with Orka
-- Ephemeral [GitHub Actions](https://github.com/jeff-vincent/orka-python-sdk/blob/main/gha_example.py) self-hosted runners that live in Orka can be easily orchestrated with the `GHAController` class when paired with [these `agent` resources](https://github.com/jeff-vincent/orka-actions-connect).
+## GitHub Actions Controller
+```
+from orka_sdk.gha_controller import GHAController
+
+controller = GHAController()
+
+controller.spin_up()
+controller.check_runner_status()
+controller.tear_down()
+```
 
