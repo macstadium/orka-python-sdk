@@ -114,3 +114,17 @@ commit_vm_state_to_base_image_response = {
   "help": {},
   "errors": []
 }
+
+check_node_status_response = {
+  "message": "",
+  "help": {},
+  "errors": [],
+  "node_status": {
+    "status": "READY",
+    "cpu": "24",
+    "gpu": 1,
+    "memory": "60G",
+    "nodeName": "macpro-1",
+    "sandbox": "false"
+  }
+}
