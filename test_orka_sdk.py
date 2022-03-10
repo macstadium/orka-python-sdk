@@ -1,7 +1,7 @@
 import json
 from unittest.mock import patch
 from orka_sdk.orka_sdk import OrkaSDK
-import sample_data as sample_data
+import sample_data
 
 class MockResponse:
 	def __init__(self, content):

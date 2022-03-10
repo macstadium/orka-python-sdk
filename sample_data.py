@@ -128,3 +128,101 @@ check_node_status_response = {
     "sandbox": "false"
   }
 }
+
+list_nodes_response = {
+  "message": "",
+  "help": {
+    "check_orka_node_status": "To check orka node status for a single node use endpoint http://10.221.188.100/resources/node/status/<NODE_NAME>",
+    "create_virtual_machine_configuration": "To create a virtual machine configuration, please use the endpoint http://10.221.188.100/resources/vm/create",
+    "required_request_data_for_create": {
+      "orka_vm_name": "<ORKA_VM_NAME>",
+      "orka_base_img": "<ORKA_BASE_IMG>",
+      "orka_image": "<ORKA_IMAGE>"
+    },
+    "deploy_virtual_machine": "To deploy a virtual machine node, make sure you have a configuration created and use the endpoint http://10.221.188.100/resources/vm/deploy",
+    "required_request_data_for_deploy": {
+      "orka_vm_name": "<ORKA_VM_NAME>",
+      "orka_node_name": "<ORKA_NODE_NAME>"
+    }
+  },
+  "errors": [],
+  "nodes": [
+    {
+      "name": "macpro-1",
+      "host_name": "macpro-1",
+      "address": "10.221.188.4",
+      "hostIP": "10.221.188.4",
+      "available_cpu": 17,
+      "allocatable_cpu": 24,
+      "available_gpu": "1",
+      "allocatable_gpu": "1",
+      "available_memory": "47.49G",
+      "total_cpu": 24,
+      "total_memory": "62.92G",
+      "state": "READY",
+      "orka_tags": []
+    },
+    {
+      "name": "macpro-2",
+      "host_name": "macpro-2",
+      "address": "10.221.188.5",
+      "hostIP": "10.221.188.5",
+      "available_cpu": 23,
+      "allocatable_cpu": 24,
+      "available_gpu": "1",
+      "allocatable_gpu": "1",
+      "available_memory": "62.23G",
+      "total_cpu": 24,
+      "total_memory": "62.92G",
+      "state": "READY",
+      "orka_group": "myUserGroup",
+      "orka_tags": []
+    },
+    {
+      "name": "macpro-3",
+      "host_name": "macpro-3",
+      "address": "10.221.188.6",
+      "hostIP": "10.221.188.6",
+      "available_cpu": 12,
+      "allocatable_cpu": 24,
+      "available_gpu": "1",
+      "allocatable_gpu": "1",
+      "available_memory": "23.72G",
+      "total_cpu": 24,
+      "total_memory": "62.92G",
+      "state": "READY",
+      "orka_group": "myUserGroup",
+      "orka_tags": []
+    },
+    {
+      "name": "mini-arm-15",
+      "host_name": "mini-arm-15",
+      "address": "10.221.188.15",
+      "hostIP": "10.221.188.15",
+      "available_cpu": 8,
+      "allocatable_cpu": 8,
+      "available_gpu": "N/A",
+      "allocatable_gpu": "N/A",
+      "available_memory": "15.39G",
+      "total_cpu": 8,
+      "total_memory": "15.39G",
+      "state": "READY",
+      "orka_tags": []
+    },
+    {
+      "name": "mini-arm-16",
+      "host_name": "mini-arm-16",
+      "address": "10.221.188.16",
+      "hostIP": "10.221.188.16",
+      "available_cpu": 8,
+      "allocatable_cpu": 8,
+      "available_gpu": "N/A",
+      "allocatable_gpu": "N/A",
+      "available_memory": "15.39G",
+      "total_cpu": 8,
+      "total_memory": "15.39G",
+      "state": "READY",
+      "orka_tags": []
+    }
+  ]
+}
