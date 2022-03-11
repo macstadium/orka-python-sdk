@@ -114,3 +114,171 @@ commit_vm_state_to_base_image_response = {
   "help": {},
   "errors": []
 }
+
+check_node_status_response = {
+  "message": "",
+  "help": {},
+  "errors": [],
+  "node_status": {
+    "status": "READY",
+    "cpu": "24",
+    "gpu": 1,
+    "memory": "60G",
+    "nodeName": "macpro-1",
+    "sandbox": "false"
+  }
+}
+
+list_nodes_response = {
+  "message": "",
+  "help": {
+    "check_orka_node_status": "To check orka node status for a single node use endpoint http://10.221.188.100/resources/node/status/<NODE_NAME>",
+    "create_virtual_machine_configuration": "To create a virtual machine configuration, please use the endpoint http://10.221.188.100/resources/vm/create",
+    "required_request_data_for_create": {
+      "orka_vm_name": "<ORKA_VM_NAME>",
+      "orka_base_img": "<ORKA_BASE_IMG>",
+      "orka_image": "<ORKA_IMAGE>"
+    },
+    "deploy_virtual_machine": "To deploy a virtual machine node, make sure you have a configuration created and use the endpoint http://10.221.188.100/resources/vm/deploy",
+    "required_request_data_for_deploy": {
+      "orka_vm_name": "<ORKA_VM_NAME>",
+      "orka_node_name": "<ORKA_NODE_NAME>"
+    }
+  },
+  "errors": [],
+  "nodes": [
+    {
+      "name": "macpro-1",
+      "host_name": "macpro-1",
+      "address": "10.221.188.4",
+      "hostIP": "10.221.188.4",
+      "available_cpu": 17,
+      "allocatable_cpu": 24,
+      "available_gpu": "1",
+      "allocatable_gpu": "1",
+      "available_memory": "47.49G",
+      "total_cpu": 24,
+      "total_memory": "62.92G",
+      "state": "READY",
+      "orka_tags": []
+    },
+    {
+      "name": "macpro-2",
+      "host_name": "macpro-2",
+      "address": "10.221.188.5",
+      "hostIP": "10.221.188.5",
+      "available_cpu": 23,
+      "allocatable_cpu": 24,
+      "available_gpu": "1",
+      "allocatable_gpu": "1",
+      "available_memory": "62.23G",
+      "total_cpu": 24,
+      "total_memory": "62.92G",
+      "state": "READY",
+      "orka_group": "myUserGroup",
+      "orka_tags": []
+    },
+    {
+      "name": "macpro-3",
+      "host_name": "macpro-3",
+      "address": "10.221.188.6",
+      "hostIP": "10.221.188.6",
+      "available_cpu": 12,
+      "allocatable_cpu": 24,
+      "available_gpu": "1",
+      "allocatable_gpu": "1",
+      "available_memory": "23.72G",
+      "total_cpu": 24,
+      "total_memory": "62.92G",
+      "state": "READY",
+      "orka_group": "myUserGroup",
+      "orka_tags": []
+    },
+    {
+      "name": "mini-arm-15",
+      "host_name": "mini-arm-15",
+      "address": "10.221.188.15",
+      "hostIP": "10.221.188.15",
+      "available_cpu": 8,
+      "allocatable_cpu": 8,
+      "available_gpu": "N/A",
+      "allocatable_gpu": "N/A",
+      "available_memory": "15.39G",
+      "total_cpu": 8,
+      "total_memory": "15.39G",
+      "state": "READY",
+      "orka_tags": []
+    },
+    {
+      "name": "mini-arm-16",
+      "host_name": "mini-arm-16",
+      "address": "10.221.188.16",
+      "hostIP": "10.221.188.16",
+      "available_cpu": 8,
+      "allocatable_cpu": 8,
+      "available_gpu": "N/A",
+      "allocatable_gpu": "N/A",
+      "available_memory": "15.39G",
+      "total_cpu": 8,
+      "total_memory": "15.39G",
+      "state": "READY",
+      "orka_tags": []
+    }
+  ]
+}
+
+list_images_response = {
+  "message": "",
+  "help": {},
+  "errors": [],
+  "image_attributes": [
+    {
+      "image": "Monterey.orkasi",
+      "image_size": "90G",
+      "modified": "2022-02-10T10:54:28.842Z",
+      "date_added": "2022-01-28T15:44:32.156Z",
+      "owner": "all"
+    },
+    {
+      "image": "Mojave-Clean.img",
+      "image_size": "17G",
+      "modified": "2019-09-16T14:49:48.088Z",
+      "date_added": "2019-11-11T23:03:58.560Z",
+      "owner": "all"
+    },
+    {
+      "image": "Mojave-Jenkins.img",
+      "image_size": "17G",
+      "modified": "2019-08-11T06:09:56.821Z",
+      "date_added": "2019-11-11T23:03:58.564Z",
+      "owner": "all"
+    },
+    {
+      "image": "Mojave.img",
+      "image_size": "17G",
+      "modified": "2019-08-14T14:25:44.282Z",
+      "date_added": "2019-11-11T23:03:58.567Z",
+      "owner": "all"
+    },
+    {
+      "image": "empty.img",
+      "image_size": "193k",
+      "modified": "2019-11-22T10:37:49.000Z",
+      "date_added": "2019-11-22T10:37:50.154Z",
+      "owner": "all"
+    }
+  ],
+  "images": [
+    "Monterey.orkasi",
+    "Mojave-Clean.img",
+    "Mojave-Jenkins.img",
+    "Mojave.img",
+    "empty.img"
+  ]
+}
+
+delete_image_response = {
+  "message": "Successfully deleted: Catalina.img",
+  "help": {},
+  "errors": []
+}

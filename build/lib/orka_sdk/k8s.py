@@ -47,7 +47,7 @@ class K8s:
 
 				return Result(errors=errors)
 			
-			return r
+			return Result(errors=None, data=r)
 
 	def delete_deployment(self, name):
 		try:
@@ -64,7 +64,7 @@ class K8s:
 
 			return Result(errors=errors)
 
-		return r
+		return Result(errors=None, data=r)
 
 	def create_service(self, yaml_path):
 		with open(yaml_path) as f:
@@ -77,7 +77,7 @@ class K8s:
 
 				return Result(errors=errors)
 			
-			return r
+			return Result(errors=None, data=r)
 
 	def delete_service(self, name):
 		try:
@@ -94,4 +94,4 @@ class K8s:
 
 			return Result(errors=errors)
 
-		return r
+		return Result(errors=None, data=r)

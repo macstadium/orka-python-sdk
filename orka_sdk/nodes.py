@@ -25,3 +25,17 @@ class Nodes():
 			return Result(errors=errors)
 
 		return Result(errors=errors, data=content['nodes'])
+
+	def get_status(self, node_name):
+		url = f'{self.orka_ip}/resources/node/status/{node_name}'
+		headers = {
+			'Authorization': f'Bearer {self.token}'
+			}
+		r = requests.get(url, headers=headers)
+		content = json.loads(r._content.decode('utf-8'))
+		errors = content.get('errors')
+		data = content['node_status']
+
+		return Result(errors=errors, data=data)
+
+	

@@ -1,3 +1,5 @@
+import json
+import requests
 from orka_sdk.result import Result
 
 
@@ -24,3 +26,35 @@ class Images:
 		data = content['image_attributes']
 		
 		return Result(errors=errors, data=data)
+
+	def get(self, image_name):
+		url = f'{self.orka_ip}/resources/image/list'
+		headers = {
+			'Authorization': f'Bearer {self.token}'
+			}
+		r = requests.get(url, headers=headers)
+		content = json.loads(r._content.decode('utf-8'))
+		errors = content.get('errors')
+		if errors:
+
+			return Result(errors=errors)
+		data = content['image_attributes']
+
+		for i in data:
+			if i['image'] == image_name:
+				image = i
+
+		return Result(errors=None, data=image)
+
+	def delete(self, image_name):
+		url = f'{self.orka_ip}/resources/image/delete'
+		headers = {
+			'Authorization': f'Bearer {self.token}'
+			}
+		data = json.dumps({'image': image_name})
+		r = requests.post(url, headers=headers, data=data)
+		content = json.loads(r._content.decode('utf-8'))
+		errors = content.get('errors')
+		
+		return Result(errors=errors)
+		
