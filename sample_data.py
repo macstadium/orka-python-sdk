@@ -226,3 +226,59 @@ list_nodes_response = {
     }
   ]
 }
+
+list_images_response = {
+  "message": "",
+  "help": {},
+  "errors": [],
+  "image_attributes": [
+    {
+      "image": "Monterey.orkasi",
+      "image_size": "90G",
+      "modified": "2022-02-10T10:54:28.842Z",
+      "date_added": "2022-01-28T15:44:32.156Z",
+      "owner": "all"
+    },
+    {
+      "image": "Mojave-Clean.img",
+      "image_size": "17G",
+      "modified": "2019-09-16T14:49:48.088Z",
+      "date_added": "2019-11-11T23:03:58.560Z",
+      "owner": "all"
+    },
+    {
+      "image": "Mojave-Jenkins.img",
+      "image_size": "17G",
+      "modified": "2019-08-11T06:09:56.821Z",
+      "date_added": "2019-11-11T23:03:58.564Z",
+      "owner": "all"
+    },
+    {
+      "image": "Mojave.img",
+      "image_size": "17G",
+      "modified": "2019-08-14T14:25:44.282Z",
+      "date_added": "2019-11-11T23:03:58.567Z",
+      "owner": "all"
+    },
+    {
+      "image": "empty.img",
+      "image_size": "193k",
+      "modified": "2019-11-22T10:37:49.000Z",
+      "date_added": "2019-11-22T10:37:50.154Z",
+      "owner": "all"
+    }
+  ],
+  "images": [
+    "Monterey.orkasi",
+    "Mojave-Clean.img",
+    "Mojave-Jenkins.img",
+    "Mojave.img",
+    "empty.img"
+  ]
+}
+
+delete_image_response = {
+  "message": "Successfully deleted: Catalina.img",
+  "help": {},
+  "errors": []
+}
