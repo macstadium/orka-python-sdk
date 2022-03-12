@@ -187,3 +187,15 @@ class VM():
 				os.remove(path)
 
 		return None
+
+	def install_brew_packages(self, brewfile_path, dest_path=None):
+		if not dest_path:
+			dest_path = '/Users/admin/Brewfile'
+		r = self.upload(brewfile_path, dest_path)
+		if r.errors:
+
+			return Result(errors=r.errors)
+		cmd = f'/usr/local/bin/brew bundle --file {dest_path}'
+		r = self.exec(cmd)
+
+		return r
