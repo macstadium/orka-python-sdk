@@ -54,7 +54,18 @@ class OrkaSDK:
 		return content['token']
 
 	def revoke_token(self):
-		pass
+		headers = {
+			'Content-Type': 'application/json',
+			'Authorization': f"Bearer {self.token}"
+			}
+		data = {}
+		result = requests.delete(f"{ORKA_IP}/token", data=data, headers=headers)
+		content = json.loads(result._content.decode('utf-8'))
+		errors = content.get('errors')
+
+		return Result(errors=errors)
+
+
 
 ###############  VM Management  ###############
 
@@ -261,8 +272,22 @@ class OrkaSDK:
 
 		return Result(errors=None, data=data)
 
-	def get_vm_by_name(self, name):
-		pass
+	def get_vm_by_name(self, vm_name):
+		r = self.list_system_vms()
+		if r.errors:
+
+			return Result(errors=r.errors)
+
+		for vm in r.data:
+			if vm_name == vm.name:
+				data = vm
+
+		if not data:
+			errors = f'VM with name: {vm_name} not found'
+
+			return Result(errors=errors)
+
+		return Result(errors=None, data=data)
 
 	def delete_vm(self, vm):
 		url = f'{ORKA_IP}/resources/vm/delete'
@@ -293,6 +318,84 @@ class OrkaSDK:
 		errors = content.get('errors')
 		
 		return Result(errors=errors)
+
+	def start_vm(self, vm):
+		url = f'{ORKA_IP}/resources/vm/exec/start'
+		headers = {
+		  'Content-Type': 'application/json',
+		  'Authorization': f'Bearer {self.token}'
+		}
+		data = json.dumps({'orka_vm_name': vm.name})
+		r = requests.post(url, headers=headers, data=data)
+		content = json.loads(r._content.decode('utf-8'))
+		errors = content.get('errors')
+		
+		return Result(errors=errors)
+
+	def stop_vm(self, vm):
+		url = f'{ORKA_IP}/resources/vm/exec/stop'
+		headers = {
+		  'Content-Type': 'application/json',
+		  'Authorization': f'Bearer {self.token}'
+		}
+		data = json.dumps({'orka_vm_name': vm.name})
+		r = requests.post(url, headers=headers, data=data)
+		content = json.loads(r._content.decode('utf-8'))
+		errors = content.get('errors')
+		
+		return Result(errors=errors)
+
+	def suspend_vm(self, vm):
+		url = f'{ORKA_IP}/resources/vm/exec/suspend'
+		headers = {
+		  'Content-Type': 'application/json',
+		  'Authorization': f'Bearer {self.token}'
+		}
+		data = json.dumps({'orka_vm_name': vm.name})
+		r = requests.post(url, headers=headers, data=data)
+		content = json.loads(r._content.decode('utf-8'))
+		errors = content.get('errors')
+		
+		return Result(errors=errors)
+
+	def resume_vm(self, vm):
+		url = f'{ORKA_IP}/resources/vm/exec/resume'
+		headers = {
+		  'Content-Type': 'application/json',
+		  'Authorization': f'Bearer {self.token}'
+		}
+		data = json.dumps({'orka_vm_name': vm.name})
+		r = requests.post(url, headers=headers, data=data)
+		content = json.loads(r._content.decode('utf-8'))
+		errors = content.get('errors')
+		
+		return Result(errors=errors)
+
+	def revert_vm(self, vm):
+		url = f'{ORKA_IP}/resources/vm/exec/revert'
+		headers = {
+		  'Content-Type': 'application/json',
+		  'Authorization': f'Bearer {self.token}'
+		}
+		data = json.dumps({'orka_vm_name': vm.name})
+		r = requests.post(url, headers=headers, data=data)
+		content = json.loads(r._content.decode('utf-8'))
+		errors = content.get('errors')
+		
+		return Result(errors=errors)
+
+	def get_vm_status(self, vm):
+		url = f'{ORKA_IP}/resources/vm/status/{vm.name}'
+		headers = {
+		  'Content-Type': 'application/json',
+		  'Authorization': f'Bearer {self.token}'
+		}
+		r = requests.get(url, headers=headers)
+		content = json.loads(r._content.decode('utf-8'))
+		errors = content.get('errors')
+		data = content['virtual_machine_resources']
+
+		return Result(errors=errors, data=data)
 
 
 ############# Image Management ###############

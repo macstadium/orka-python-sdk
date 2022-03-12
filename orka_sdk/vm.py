@@ -1,5 +1,6 @@
 import os
 import paramiko
+import requests
 from jinja2 import Environment
 from jinja2 import FileSystemLoader
 from orka_sdk.result import Result
