@@ -36,7 +36,7 @@ orka.revoke_token()
 # Define a VM
 vm_data = {
 	'vm_name': 'fake-name',
-	'orka_base_image': 'new-image.img',
+	'orka_base_image': 'my-image.img',
 	'core_count': '3',
 	'vcpu_count': '3'
 	}
@@ -47,12 +47,12 @@ vm = r.data
 ```
 #### Get VM by id
 ```python
-r = orka.get_vm_by_id(<vm_id>)
+r = orka.get_vm_by_id('<vm_id>')
 vm = r.data
 ```
 #### Get VM by name
 ```python
-r = orka.get_vm_by_name(<vm_name>)
+r = orka.get_vm_by_name('<vm_name>')
 vm = r.data
 ```
 #### Iterate over all VMs in system and execute a remote command on each
@@ -65,12 +65,6 @@ for vm in r.data:
 ```python
 orka.commit_vm_state_to_base_image(vm)
 orka.purge_vm(vm)
-```
-#### Print the name of all VMs in the system
-```python
-r = orka.list_session_vms()
-for vm in r.data:
-	print(vm.name)
 ```
 #### Save a deployed VM's state as an Image
 ```python
@@ -158,12 +152,12 @@ r = vm.download(remote_path, local_path)
 Execute a remote command on a deployed VM
 ```python
 r = vm.exec('printenv')
-print(r.data.stdout']
+print(r.data['stdout'])
 ```
 #### `write_persistent_env_var()`
 Write an env var export statement to a deployed VM's `.zshenv` or elsewhere
 ```python
-data = {'foo': 'bar'}
+data = {'FOO': 'bar'}
 r = vm.write_persistent_env_var(data)
 ```
 Alternatively, you can also pass a destination filepath, like so:
@@ -187,7 +181,7 @@ r = vm.create_launch_daemon(data)
 Install Homebrew packages listed in a Brewfile.
 >NOTE: Homebrew must be installed on the VM
 ```python
-file_path = '/path/to/brewfile'
+file_path = '/path/to/Brewfile'
 r = vm.install_brew_packages(file_path)
 ```
 ## K8s Management
