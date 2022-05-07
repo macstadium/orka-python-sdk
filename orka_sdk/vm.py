@@ -1,6 +1,5 @@
 import os
 import paramiko
-import requests
 from jinja2 import Environment
 from jinja2 import FileSystemLoader
 from orka_sdk.result import Result
@@ -128,6 +127,21 @@ class VM():
 		return r
 
 	def enable_auto_login(self):
+		# upload kcpassword file
+		r = self.upload('orka_sdk/kcpassword', '/Users/admin/kcpassword.temp')
+		if r.errors:
+			
+			return r
+		# move kcpassword with sudo
+		r = self.exec('sudo -S -p "" mv /Users/admin/kcpassword.temp /private/etc/kcpassword')
+		if r.errors:
+
+			return r
+		# remove temp file
+		r = self.exec('rm -rf /Users/admin/kcpassword.temp')
+		if r.errors:
+			
+			return r
 		cmd = (f'sudo -S -p "" defaults write' 
 			f' /Library/Preferences/com.apple.loginwindow.plist' 
 			f' autoLoginUser {self.ssh_user}')
@@ -151,7 +165,7 @@ class VM():
 		# render template as temp file
 		cwd = os.getcwd()
 		env = Environment(loader=FileSystemLoader(cwd))
-		template = env.get_template('launch_daemon.jinja')
+		template = env.get_template('launchd.jinja')
 		with open('launch_daemon.temp', 'w') as f:
 			f.write(template.render(data))
 
@@ -172,6 +186,38 @@ class VM():
 		self._remove_temp_files()
 		try:
 			r = self.exec('rm -rf /tmp/launch_daemon.temp')
+		except Exception as e:
+			print('Warning: failed to remove remote temp file.')
+
+			return r
+
+		return r
+
+	def create_launch_agent(self, data):
+		# render template as temp file
+		cwd = os.getcwd()
+		env = Environment(loader=FileSystemLoader(cwd))
+		template = env.get_template('/orka_sdk/launchd.jinja')
+		with open('launch_agent.temp', 'w') as f:
+			f.write(template.render(data))
+
+		# upload temp file
+		r = self.upload(
+			'launch_agent.temp',
+			'/tmp/launch_agent.temp')
+		if r.errors:
+
+			return r
+
+		# move file with sudo
+		r = self.exec(
+			f'sudo -S -p "" mv /tmp/launch_agent.temp ' 
+			f'/Library/LaunchAgents/com.{data["name"]}.app.plist')
+
+		# clean up
+		self._remove_temp_files()
+		try:
+			r = self.exec('rm -rf /tmp/launch_agent.temp')
 		except Exception as e:
 			print('Warning: failed to remove remote temp file.')
 

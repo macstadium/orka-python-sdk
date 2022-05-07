@@ -1,5 +1,4 @@
 import os
-import requests
 import yaml
 from pathlib import Path
 from kubernetes import client, config
@@ -95,3 +94,11 @@ class K8s:
 			return Result(errors=errors)
 
 		return Result(errors=None, data=r)
+
+	def create_secret(self):
+		pass
+
+	def delete_secret(self):
+		pass
+
+	
